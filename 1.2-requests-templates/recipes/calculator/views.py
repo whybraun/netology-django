@@ -18,28 +18,12 @@ DATA = {
     },
 }
 
-def omlet(request):
+def dish_view(request, dish):
     res = {}
-    servings = request.GET.get("servings", 1)
-    for i, e in DATA['omlet'].items():
-        res.update({i: e * int(servings)})
-    context = {'recipe': res}
-    return render(request, 'calculator/index.html', context)
-
-
-def pasta(request):
-    res = {}
-    servings = request.GET.get("servings", 1)
-    for i, e in DATA['pasta'].items():
-        res.update({i: e * int(servings)})
-    context = {'recipe': res}
-    return render(request, 'calculator/index.html', context)
-
-
-def buter(request):
-    res = {}
-    servings = request.GET.get("servings", 1)
-    for i, e in DATA['buter'].items():
-        res.update({i: e * int(servings)})
+    servings = int(request.GET.get('servings', 1))
+    if dish in DATA:
+        ingredients = DATA[dish]
+        for i, e in ingredients.items():
+            res.update({i: e * int(servings)})
     context = {'recipe': res}
     return render(request, 'calculator/index.html', context)
