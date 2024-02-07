@@ -11,7 +11,7 @@ class AdvertisementStatusChoices(models.TextChoices):
 
 class Advertisement(models.Model):
     """Объявление."""
-
+    id = models.BigAutoField(primary_key=True)
     title = models.TextField()
     description = models.TextField(default='')
     status = models.TextField(
