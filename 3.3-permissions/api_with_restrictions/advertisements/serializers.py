@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from advertisements.models import Advertisement
+from rest_framework.exceptions import ValidationError
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,20 +28,17 @@ class AdvertisementSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Метод для создания"""
+
         validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
 
     def validate(self, data):
         """Метод для валидации. Вызывается при создании и обновлении."""
 
-        title = data.get('title', None)
-        if not title:
-            raise serializers.ValidationError("Title cannot be empty.")
-
-        description = data.get('description', None)
-        if not description:
-            raise serializers.ValidationError("Description cannot be empty.")
-        
+        status = Advertisement.objects.all().filter(
+            status="OPEN", creator=self.context["request"].user
+        )
+        if status.count() >= 10 and data.get("status") != "CLOSED":
+            raise ValidationError("Нельзя добавить больше десяти открытых объявлений")
         return data
-    
     
